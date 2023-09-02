@@ -10,7 +10,7 @@ services:
     ports:
       - 8004:8000
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/foo
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/foo
     depends_on:
       - db
 
@@ -22,3 +22,25 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=foo
+
+  dozzle:
+    image: amir20/dozzle:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      # DOZZLE_USERNAME: fanprime
+      # DOZZLE_PASSWORD: dozzle1234
+      DOZZLE_KEY: basdiqwdkasoidij-qiwdaspjkdq0pwwjdas
+      DOZZLE_NO_ANALYTICS: "true"
+    ports:
+      - 9999:8080
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 9090:8080
+    depends_on:
+      - db
+    environment:
+      ADMINER_DESIGN: pepa-linha
