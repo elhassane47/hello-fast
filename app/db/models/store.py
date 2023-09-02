@@ -1,7 +1,6 @@
 from typing import Any
 import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy_utils import EmailType
 
 import uuid
 
@@ -17,6 +16,6 @@ class Store(Base):
     phone = sa.Column(sa.Text)
     street = sa.Column(sa.Text, nullable=False)
     zipcode = sa.Column(sa.Text, nullable=False)
-    email = sa.Column(EmailType)
+    email = sa.Column(sa.Text)
 
 

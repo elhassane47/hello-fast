@@ -1,28 +1,24 @@
 import os
-from functools import lru_cache
-from typing import Generator
-
+from .models.base import Base
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, AsyncEngine
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, scoped_session
 
-from config import get_settings
+from typing import AsyncGenerator
+from sqlalchemy.orm import sessionmaker
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
-engine = create_engine(get_settings().database_url, pool_pre_ping=True)
+engine = AsyncEngine(create_engine(DATABASE_URL, echo=True, future=True))
 
-@lru_cache
-def create_session() -> scoped_session:
-    Session = scoped_session(
-        sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+async def create_db_and_tables():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
+
+async def get_async_session() -> AsyncSession:
+    async_session = sessionmaker(
+        engine, class_=AsyncSession, expire_on_commit=False
     )
-    return Session
-
-
-# Dependency
-def get_session() -> Generator[scoped_session, None, None]:
-    Session = create_session()
-    try:
-        yield Session
-    finally:
-        Session.remove()
+    async with async_session() as session:
+        yield session

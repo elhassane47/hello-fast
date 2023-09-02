@@ -1,9 +1,9 @@
-from typing import Any, Generic, List, Optional, Type, TypeVar
+from typing import Any, Generic, Optional, Type, TypeVar
 
 import sqlalchemy
 from fastapi import HTTPException
 
-from app.db.models import Base
+from app.db.models.store import Base
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
